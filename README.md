@@ -31,6 +31,6 @@ DB_NAME=new_talent_capture
 ## create database
 CREATE DATABASE new_talent_capture;
 ## run migration
-flask db init        # create migrations folder (only once)
-flask db migrate     # generate migration file
-flask db upgrade     # apply to DB# talent-capture
+flask db init        --create migrations folder (only once)
+flask db migrate    -- generate migration file
+flask db upgrade     -- apply to DB# talent-capture
