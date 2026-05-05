@@ -2,18 +2,17 @@ from flask import Blueprint,request,jsonify
 from werkzeug.security import generate_password_hash,check_password_hash
 from app.models.user import User
 from app.extensions import db
-import logging
 from flask_jwt_extended import create_access_token
-
+from flask import current_app
 auth_bp = Blueprint('__auth__',__name__,url_prefix="/auth")
-logger = logging.getLogger(__name__)
+
 @auth_bp.route('/register',methods=["POST"])
 def register():
     try:
         data= request.json
-        logger.info(data)       
+        current_app.logger.info(data)      
         
-        logger.info(f"Register request: {data}")
+        current_app.logger.info(f"Register request: {data}")
 
         user = User(
             username=data["username"],
@@ -28,7 +27,7 @@ def register():
         db.session.commit()
         return jsonify({"message":"user registered successfully"})
     except Exception as e:
-        logger.error(f"Error occurred: {str(e)}")
+        current_app.logger.error(f"Error occurred: {str(e)}")
         return {"error": f"Error occurred: {str(e)}"}, 500
     
 

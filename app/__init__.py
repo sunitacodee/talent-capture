@@ -9,6 +9,9 @@ from app.models.user import User
 # from .routes.product import product_bp
 from app.extensions import jwt
 from app.decorators import role_required
+import logging
+from logging.handlers import RotatingFileHandler
+
 migrate = Migrate()
 # setup_logging()
 
@@ -26,5 +29,16 @@ def create_app():
 
     app.register_blueprint(user_bp)
     app.register_blueprint(auth_bp)
+
+    handler = RotatingFileHandler('app.log', maxBytes=10000, backupCount=3)
+    handler.setLevel(logging.INFO)
+
+    formatter = logging.Formatter(
+        '%(asctime)s %(levelname)s: %(message)s'
+    )
+    handler.setFormatter(formatter)
+
+    app.logger.addHandler(handler)
+    app.logger.setLevel(logging.INFO)
 
     return app
