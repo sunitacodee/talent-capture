@@ -8,6 +8,7 @@ from .routes.auth import auth_bp
 from app.models.user import User
 # from .routes.product import product_bp
 from app.extensions import jwt
+from app.decorators import role_required
 migrate = Migrate()
 # setup_logging()
 
