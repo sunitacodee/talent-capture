@@ -21,6 +21,7 @@ pip install -r requirements.txt
 
 ## create .env file and copy
 FLASK_APP=run.py
+
 FLASK_ENV=development
 
 DB_USER=root
@@ -35,8 +36,8 @@ DB_NAME=new_talent_capture
 ## create database
 CREATE DATABASE new_talent_capture;
 ## run migration
-flask db init        # create migrations folder (only once)
+flask db init        --create migrations folder (only once)
 
-flask db migrate     # generate migration file
+flask db migrate    -- generate migration file
 
-flask db upgrade     # apply to DB# talent-capture
+flask db upgrade     -- apply to DB# talent-capture
