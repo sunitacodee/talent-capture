@@ -3,7 +3,6 @@ app/__pycache__/
 app/routes/__pycache__
 app/models/__pycache__/
 instance/
-migrations/
 __pycache__/
 *.pyc
 app.log

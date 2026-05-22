@@ -6,11 +6,13 @@ from .extensions import db, migrate
 from .routes.user import user_bp
 from .routes.auth import auth_bp
 from app.models.user import User
-# from .routes.product import product_bp
+from app.models.employee import Employee
+from app.models.employer import Employer
 from app.extensions import jwt
 from app.decorators import role_required
 import logging
 from logging.handlers import RotatingFileHandler
+from app.routes.employee import employee_bp
 
 migrate = Migrate()
 # setup_logging()
@@ -18,6 +20,10 @@ migrate = Migrate()
 
 def create_app():
     app = Flask(__name__)
+
+    @app.route("/")
+    def test():
+        return "Hello talent capturexamp"
 
     app.config.from_object("app.config.Config")
     jwt.init_app(app)
@@ -29,6 +35,8 @@ def create_app():
 
     app.register_blueprint(user_bp)
     app.register_blueprint(auth_bp)
+    app.register_blueprint(employee_bp, url_prefix="/api/employees")
+
 
     handler = RotatingFileHandler('app.log', maxBytes=10000, backupCount=3)
     handler.setLevel(logging.INFO)
