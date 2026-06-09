@@ -9,5 +9,5 @@ import os
 
 db = SQLAlchemy()
 migrate = Migrate()
-jwt = jwt = JWTManager()
+jwt = JWTManager()
 ma= Marshmallow()

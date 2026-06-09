@@ -1,22 +1,22 @@
 from flask import Flask
-from flask_migrate import Migrate
-
 from .extensions import db, migrate 
-# login_manager
 from .routes.user import user_bp
 from .routes.auth import auth_bp
 from app.models.user import User
 from app.models.employee import Employee
 from app.models.employer import Employer
+from app.models.province import Province
+from app.models.district import District
+from app.models.localbody import LocalBody
+from app.models.localBodyWard import LocalBodyWard
 from app.extensions import jwt
 from app.decorators import role_required
 import logging
 from logging.handlers import RotatingFileHandler
 from app.routes.employee import employee_bp
-
-migrate = Migrate()
-# setup_logging()
-
+from app.routes.userProfile import user_profile_bp
+from app.commands import address_seeder
+from app.routes.location import location_bp
 
 def create_app():
     app = Flask(__name__)
@@ -31,12 +31,15 @@ def create_app():
     db.init_app(app)
     migrate.init_app(app, db)
 
-    # login_manager.init_app(app)
+    #register commands here
+    app.cli.add_command(address_seeder)   
 
-    app.register_blueprint(user_bp)
-    app.register_blueprint(auth_bp)
+    #register  routes here
+    app.register_blueprint(user_bp,url_prefix="/api/users")
+    app.register_blueprint(auth_bp,url_prefix="/api/auth")
+    app.register_blueprint(user_profile_bp,url_prefix="/api/users")
     app.register_blueprint(employee_bp, url_prefix="/api/employees")
-
+    app.register_blueprint(location_bp,url_prefix="/api/locations")
 
     handler = RotatingFileHandler('app.log', maxBytes=10000, backupCount=3)
     handler.setLevel(logging.INFO)

@@ -35,6 +35,9 @@ class User(db.Model):
     # Optional: soft delete
     deleted_at = db.Column(db.DateTime, nullable=True)
 
+
+
+
     # Helper method to generate token
     def generate_token(self):
         self.login_token = str(uuid.uuid4())
@@ -45,9 +48,8 @@ class User(db.Model):
             "id": self.id,
             "username": self.username,
             "email": self.email,
-            "first_name": self.first_name,
-            "last_name": self.last_name,
-            "user_type": self.user_type,
+            "name": self.first_name + " "+self.last_name ,
+            "role": self.user_type,
             "is_active": self.is_active,
             "is_verified": self.is_verified,
             "created_at": self.created_at,

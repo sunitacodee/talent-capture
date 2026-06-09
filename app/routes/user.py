@@ -1,11 +1,23 @@
 from flask import Blueprint,request,jsonify
 from app.models.user import User
 from app.extensions import db
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required, get_jwt_identity,get_jwt
 from app.schemas.user_schema import users_schema
 from app.decorators.role_required import role_required
 from flask import current_app
-user_bp = Blueprint("user",__name__,url_prefix="/users")
+user_bp = Blueprint("user",__name__)
+
+@user_bp.route("/me", methods=["GET"])
+@jwt_required()
+def getAuthUser():
+    try:
+        email = get_jwt_identity()
+        user = User.query.filter_by(email=email).first()
+        return jsonify(user.to_dict())
+    except Exception as e:
+        current_app.logger.info(f"error fetching users : {str(e)}")      
+    return jsonify(f"error fetching users : {str(e)}")
+
 
 @user_bp.route("/", methods=["GET"])
 @role_required('admin')

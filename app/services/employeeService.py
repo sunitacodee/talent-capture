@@ -9,7 +9,7 @@ class EmployeeService:
     def getAll(user_id: int = None)->list[dict]:
         query = Employee.query
         if user_id is not None:
-            query = query.filter_by(user_id=user_id)
+            employees = query.filter_by(user_id=user_id)
         employees = query.order_by(Employee.created_at).all()
         return [e.to_dict() for e in employees]
     

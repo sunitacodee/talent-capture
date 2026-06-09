@@ -41,3 +41,7 @@ flask db init        --create migrations folder (only once)
 flask db migrate    -- generate migration file
 
 flask db upgrade     -- apply to DB# talent-capture
+
+# to run seeders
+fask address-seed  --stores province district and local body data
+ 

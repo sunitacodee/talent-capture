@@ -4,7 +4,7 @@ from app.models.user import User
 from app.extensions import db
 from flask_jwt_extended import create_access_token
 from flask import current_app
-auth_bp = Blueprint('__auth__',__name__,url_prefix="/auth")
+auth_bp = Blueprint('__auth__',__name__)
 
 @auth_bp.route('/register',methods=["POST"])
 def register():
@@ -47,9 +47,10 @@ def login():
                                      )
          return jsonify({
               "message": "Login successful",
-               "access_token": token
+               "access_token": token,
+               "user":user.to_dict()
          })
 
     except Exception as e:
-        logger.error(f"Error occurred: {str(e)}")
-        return {"error": "Something went wrong could not login"}, 500
+        current_app.logger.error(f"Error occurred: {str(e)}")
+        return {"error":f"Error occurred: {str(e)}"}, 500
