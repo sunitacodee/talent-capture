@@ -17,9 +17,17 @@ from app.routes.employee import employee_bp
 from app.routes.userProfile import user_profile_bp
 from app.commands import address_seeder
 from app.routes.location import location_bp
+from flask_cors import CORS
+from flask import request
+
 
 def create_app():
     app = Flask(__name__)
+    CORS(app,origins=["http://localhost::5173"])
+    @app.before_request
+    def handle_preflight():
+        if request.method == "OPTIONS":
+            return {}, 200 
 
     @app.route("/")
     def test():
@@ -37,7 +45,7 @@ def create_app():
     #register  routes here
     app.register_blueprint(user_bp,url_prefix="/api/users")
     app.register_blueprint(auth_bp,url_prefix="/api/auth")
-    app.register_blueprint(user_profile_bp,url_prefix="/api/users")
+    app.register_blueprint(user_profile_bp,url_prefix="/api/users/profile")
     app.register_blueprint(employee_bp, url_prefix="/api/employees")
     app.register_blueprint(location_bp,url_prefix="/api/locations")
 

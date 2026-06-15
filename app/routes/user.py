@@ -15,7 +15,7 @@ def getAuthUser():
         user = User.query.filter_by(email=email).first()
         return jsonify(user.to_dict())
     except Exception as e:
-        current_app.logger.info(f"error fetching users : {str(e)}")      
+        current_app.logger.exception(f"error fetching users : {str(e)}")      
     return jsonify(f"error fetching users : {str(e)}")
 
 

@@ -49,7 +49,7 @@ def uploadUserProfile():
         return jsonify(f"error uploading user profile pic : {str(e)}")
 
 
-@user_profile_bp.route("/",methods = ["POST"])
+@user_profile_bp.route("/cv",methods = ["POST"])
 @jwt_required()
 def uploadUserCV():
     try:
