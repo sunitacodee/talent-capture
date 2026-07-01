@@ -4,7 +4,7 @@ from app.models.user import User
 from flask_jwt_extended import jwt_required,get_jwt_identity
 from werkzeug.utils import secure_filename
 from app.services.userService import UserService
-
+from flask import current_app
 user_profile_bp = Blueprint('user_profile',__name__)
 
 
@@ -13,22 +13,21 @@ user_profile_bp = Blueprint('user_profile',__name__)
 @jwt_required()
 def uploadUserProfile():
     try:
-        user_id = get_jwt_identity()
+        email = get_jwt_identity()
         data = request.json
-        user = User.query.get(user_id)
+        user = User.query.filter(User.email == email).first()
 
-        user = User.query.get(user_id)
 
         if not user:
             return jsonify({
-                "message": "User not found"
+                "message": f"User not found id : {email}"
             }), 404
         profile = UserProfile.query.filter_by(
-            user_id=user_id
+            user_id=user.id
         ).first()
 
         if not profile:
-            profile = UserProfile(user_id=user_id)
+            profile = UserProfile(user_id=user.id)
         profile_pic = request.files.get("profile_pic")
 
         if not profile_pic:
@@ -46,7 +45,7 @@ def uploadUserProfile():
     
     except Exception as e:
         current_app.logger.info(f"error uploading user profile: {str(e)}")      
-        return jsonify(f"error uploading user profile pic : {str(e)}")
+        return jsonify(f"error uploading user profile pic : {str(e)}"),500
 
 
 @user_profile_bp.route("/cv",methods = ["POST"])

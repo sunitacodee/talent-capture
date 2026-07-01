@@ -4,8 +4,9 @@ from app.models.user import User
 from app.extensions import db
 from flask_jwt_extended import create_access_token
 from flask import current_app
+from app.services.userService import UserService
 auth_bp = Blueprint('__auth__',__name__)
-
+from app.mailer.mailer import Mailer
 @auth_bp.route('/register',methods=["POST"])
 def register():
     try:
@@ -25,6 +26,9 @@ def register():
             )
         db.session.add(user)
         db.session.commit()
+        verificationCode = UserService.generateUserVerifcationCode(user.id,'email_verification_code',300)
+        Mailer.sendNotificationEmail(user.email,f"User registratered successfully", f"Your verification code is {verificationCode['code']}. "
+        f"This code will expire in 5 minutes.")
         return jsonify({"message":"user registered successfully"})
     except Exception as e:
         current_app.logger.error(f"Error occurred: {str(e)}")
@@ -54,3 +58,4 @@ def login():
     except Exception as e:
         current_app.logger.error(f"Error occurred: {str(e)}")
         return {"error":f"Error occurred: {str(e)}"}, 500
+    
