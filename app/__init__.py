@@ -20,10 +20,21 @@ from app.commands import address_seeder
 from app.routes.location import location_bp
 from flask_cors import CORS
 from flask import request
-
+import os
 def create_app():
     app = Flask(__name__)
-    CORS(app,origins=["http://localhost::5173"])
+    app.config.from_object("app.config.Config")
+
+    CORS(
+    app,
+    supports_credentials=True,
+    origins=[
+       os.getenv("FRONTEND_URL"),
+        "http://127.0.0.1:5173"
+    ]
+)
+    
+
     @app.before_request
     def handle_preflight():
         if request.method == "OPTIONS":
@@ -33,7 +44,6 @@ def create_app():
     def test():
         return "Hello talent capturexamp"
 
-    app.config.from_object("app.config.Config")
     jwt.init_app(app)
 
     db.init_app(app)
@@ -45,12 +55,18 @@ def create_app():
     #register commands here
     app.cli.add_command(address_seeder)   
 
+
+    CORS(auth_bp, origins=["http://localhost:5173"], supports_credentials=True)
+    
+    app.register_blueprint(auth_bp,url_prefix="/api/auth")
+    CORS(user_bp, origins=["http://localhost:5173",""], supports_credentials=True)
+
     #register  routes here
     app.register_blueprint(user_bp,url_prefix="/api/users")
-    app.register_blueprint(auth_bp,url_prefix="/api/auth")
     app.register_blueprint(user_profile_bp,url_prefix="/api/users/profile")
     app.register_blueprint(employee_bp, url_prefix="/api/employees")
     app.register_blueprint(location_bp,url_prefix="/api/locations")
+
 
     handler = RotatingFileHandler('app.log', maxBytes=10000, backupCount=3)
     handler.setLevel(logging.INFO)

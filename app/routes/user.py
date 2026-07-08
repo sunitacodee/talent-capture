@@ -7,8 +7,9 @@ from app.decorators.role_required import role_required
 from flask import current_app
 user_bp = Blueprint("user",__name__)
 
-@user_bp.route("/me", methods=["GET"])
-@jwt_required()
+@user_bp.route("/me", methods=["GET"],strict_slashes=False)
+# @jwt_required()
+@role_required('admin','employee','employer')
 def getAuthUser():
     try:
         email = get_jwt_identity()
@@ -16,11 +17,11 @@ def getAuthUser():
         return jsonify(user.to_dict())
     except Exception as e:
         current_app.logger.exception(f"error fetching users : {str(e)}")      
-    return jsonify(f"error fetching users : {str(e)}")
+        return jsonify(f"error fetching users : {str(e)}")
 
 
 @user_bp.route("/", methods=["GET"])
-@role_required('admin')
+@role_required('admin','employee','employer')
 def getUsers():
     try:
         users = User.query.all()      
@@ -29,7 +30,7 @@ def getUsers():
         return jsonify("no users found")
     except Exception as e:
         current_app.logger.info(f"error fetching users : {str(e)}")      
-        return jsonify(f"error fetching users : {str(e)}")
+        return jsonify(f"error fetching users : {str(e)}")  
 
 @user_bp.route("/<int:id>", methods=["DELETE"])
 @jwt_required()

@@ -22,3 +22,10 @@ class Config:
     MAIL_USERNAME = os.getenv("MAIL_USERNAME")
     MAIL_PASSWORD = os.getenv("MAIL_PASSWORD")
     MAIL_DEFAULT_SENDER = os.getenv("MAIL_DEFAULT_SENDER")
+    # Store JWT in cookies
+    JWT_TOKEN_LOCATION = ["cookies"]
+    # JWT_COOKIE_SECURE = False      # True in production (HTTPS)
+    JWT_COOKIE_HTTPONLY = True
+    # JWT_COOKIE_SAMESITE = "Lax"
+    JWT_COOKIE_SAMESITE = "None"
+    JWT_COOKIE_SECURE = True

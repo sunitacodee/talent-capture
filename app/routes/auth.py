@@ -2,11 +2,13 @@ from flask import Blueprint,request,jsonify
 from werkzeug.security import generate_password_hash,check_password_hash
 from app.models.user import User
 from app.extensions import db
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token,set_access_cookies,unset_jwt_cookies
 from flask import current_app
 from app.services.userService import UserService
 auth_bp = Blueprint('__auth__',__name__)
 from app.mailer.mailer import Mailer
+from flask_cors import cross_origin
+
 @auth_bp.route('/register',methods=["POST"])
 def register():
     try:
@@ -35,6 +37,7 @@ def register():
         return {"error": f"Error occurred: {str(e)}"}, 500
     
 
+
 @auth_bp.route("/login",methods=["POST"])
 def login():
     try:
@@ -44,18 +47,30 @@ def login():
              return jsonify({"error": "Invalid credentials"}),401
          
          token = create_access_token(
-             identity=str(user.email),
-              additional_claims={
-        "role": user.user_type
-    }
-                                     )
-         return jsonify({
-              "message": "Login successful",
-               "access_token": token,
-               "user":user.to_dict()
-         })
+            identity=str(user.email),
+            additional_claims={
+            "role": user.user_type
+                } )
+         response = jsonify({
+                "message": "Login successful",
+                "access_token": token,
+                "user":user.to_dict()
+            })
+
+         set_access_cookies(response, token)                                   
+         return response
 
     except Exception as e:
         current_app.logger.error(f"Error occurred: {str(e)}")
         return {"error":f"Error occurred: {str(e)}"}, 500
     
+
+    @app.route("/logout", methods=["POST"])
+    def logout():
+        response = jsonify({
+            "message": "Logged out"
+        })
+
+        unset_jwt_cookies(response)
+
+        return response
